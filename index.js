@@ -1,4 +1,4 @@
-// index.js
+
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -6,14 +6,20 @@ import morgan from "morgan";
 import mongoose from "mongoose";
 import testimonialRoutes from "./routes/testimonialRoutes.js";
 
-// Load environment variables
+
 dotenv.config();
 
 const app = express();
 
 // Middleware
-app.use(express.json()); // Parse JSON bodies
-app.use(cors());         // Enable CORS
+app.use(express.json()); 
+app.use(
+  cors({
+    origin: ["https://skillswap-skillplatform.vercel.app", "http://localhost:5173/"], 
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true, // if you’re using cookies/auth
+  })
+);    
 app.use(morgan("dev"));  // Logger
 
 mongoose
@@ -24,14 +30,13 @@ mongoose
     process.exit(1); // Exit if DB connection fails
   });
 
-// Example route
+
 app.get("/", (req, res) => {
   res.send("🚀 Server is running!");
 });
 
 app.use("/api/testimonials", testimonialRoutes);
 
-// Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`✅ Server running on http://localhost:${PORT}`);
